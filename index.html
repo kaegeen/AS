@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AtmosphereSync</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center px-4">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold mb-4">AtmosphereSync</h1>
+    <p class="text-lg mb-6">Your UI reflects real-time space weather 🌌</p>
+    <div id="dataDisplay" class="p-4 bg-gray-800 rounded-lg shadow-lg">
+      <p>Loading space weather data...</p>
+    </div>
+  </div>
+
+  <script>
+    async function fetchSpaceWeather() {
+      const res = await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json');
+      const data = await res.json();
+      const latest = data[data.length - 1];
+      const kpIndex = latest[1];
+      const dataDisplay = document.getElementById('dataDisplay');
+
+      if (kpIndex >= 6) {
+        document.body.className = 'bg-red-900 text-white';
+        dataDisplay.innerHTML = `<p>🌪️ Strong geomagnetic storm detected!</p><p>KP Index: ${kpIndex}</p>`;
+      } else if (kpIndex >= 4) {
+        document.body.className = 'bg-yellow-900 text-black';
+        dataDisplay.innerHTML = `<p>⚠️ Moderate geomagnetic activity.</p><p>KP Index: ${kpIndex}</p>`;
+      } else {
+        document.body.className = 'bg-green-900 text-white';
+        dataDisplay.innerHTML = `<p>🌤️ Calm space weather today.</p><p>KP Index: ${kpIndex}</p>`;
+      }
+    }
+
+    fetchSpaceWeather();
+  </script>
+</body>
+</html>
